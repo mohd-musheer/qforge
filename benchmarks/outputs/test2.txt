@@ -1,0 +1,122 @@
+output:
+
+To reduce the time complexity and improve readability of the given function, we can make several optimizations. The current implementation has a time complexity of \(O(n^2)\) due to nested loops iterating over each element in the input matrix. We can achieve a more efficient solution with a time complexity of \(O(n \times m)\), where \(n\) is the number of rows and \(m\) is the number of columns in the input matrix.
+
+### Bottlenecks:
+
+1. **Nested Loops**: The current implementation uses two nested loops, which results in a quadratic time complexity.
+2. **Redundant Appends**: There are multiple append operations inside the loops, which can be inefficient.
+3. **Intermediate Lists**: Using intermediate lists (`temp` and `final`) adds unnecessary overhead.
+
+### Improved Solution:
+
+We can rewrite the function to use a single loop and avoid creating intermediate lists. This will reduce both time complexity and memory usage.
+
+```python
+def process(data):
+    # Initialize an empty list to store the final result
+    final = []
+
+    # Iterate over each row in the input data
+    for row in data:
+        # Use a generator expression to process each element in the row
+        processed_row = (x * 2 if x % 2 == 0 else x * 3 for x in row)
+        
+        # Extend the final list with the processed row
+        final.extend(processed_row)
+
+    return final
+
+# Example usage:
+data = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+]
+
+result = process(data)
+print(result)
+```
+
+### Explanation:
+
+1. **Single Loop**: We iterate over each row in the input data using a `for` loop.
+2. **Generator Expression**: For each row, we use a generator expression to process each element. This is more efficient than creating intermediate lists because it yields elements one at a time.
+3. **Extend Method**: We use the `extend` method to add all processed elements from the generator to the `final` list. This avoids the need for additional list concatenation.
+
+This approach reduces the time complexity to \(O(n \times m)\) and improves readability by removing unnecessary steps and intermediate variables.
+
+
+
+Explanation:
+
+
+EVALUATION OF TEST 2
+Prompt Type
+
+Algorithm optimization + readability refactor.
+
+This is easier for small models than:
+
+architecture
+security
+system design
+
+So expect higher quality here.
+
+What The Model Did Correctly
+Area	Evaluation
+Detected nested loops	Correct
+Improved readability	Correct
+Removed unnecessary temp lists	Correct
+Used generator expression	Good
+Reduced memory overhead	Correct
+Flattened logic	Correct
+Important Technical Correction
+
+The model says:
+
+“Current implementation has O(n²)”
+
+This is:
+
+WRONG OR MISLEADING.
+
+The original complexity depends on total elements.
+
+If:
+
+n = rows
+m = columns
+
+Then original complexity is already:
+
+O(n × m)
+
+because every element is visited once.
+
+The model did NOT truly reduce asymptotic complexity.
+
+It reduced:
+
+memory overhead
+intermediate allocations
+readability issues
+
+This is a very important distinction.
+
+TEST 2 SCORE
+
+| Category                     | Score |
+| ---------------------------- | ----- |
+| Readability Refactor         | 8/10  |
+| Pythonic Improvements        | 8/10  |
+| Complexity Analysis Accuracy | 4/10  |
+| Production Style             | 7/10  |
+| Hallucination Control        | 8/10  |
+
+Overall:
+
+~7/10
+
+Better than Test 1.
