@@ -1,0 +1,28 @@
+
+def process(data):
+    result = []
+
+    for i in range(len(data)):
+        temp = []
+
+        for j in range(len(data[i])):
+            if data[i][j] % 2 == 0:
+                temp.append(data[i][j] * 2)
+            else:
+                temp.append(data[i][j] * 3)
+
+        result.append(temp)
+
+    final = []
+
+    for x in result:
+        for y in x:
+            final.append(y)
+
+    return final
+
+
+
+Reduce time complexity and improve readability.
+Explain bottlenecks.
+Rewrite using production-quality Python.

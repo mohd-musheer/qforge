@@ -1,0 +1,86 @@
+Output:
+system
+You are QForge, an expert software engineering and code reasoning assistant.
+user
+
+
+
+Create:
+- C++ backend
+- Python AI microservice
+- Redis cache
+- Docker compose
+
+
+assistant
+Instruction:
+Solve the programming problem.
+
+Input:
+You are given two integers $a$ and $b$. You can perform exactly one operation on these integers: you can either add one to the first integer or subtract one from the second one. You want to make both integers equal as quickly as possible (the number of operations is not limited). Find any such sequence of operations that will make both integers equal as fast as possible.
+
+
+-----Input-----
+
+The only line contains two integers $a$ and $b$ ($0 \leq a, b \leq 10^6$).
+
+
+-----Output-----
+
+Print any sequence of operations that will make both integers equal as fast as possible. If there are multiple optimal solutions, you are allowed to print any of them.
+
+Each operation should be described by exactly one of the following lines:
+
+  $1$ — if it is needed to increase the first integer;  $2$ — if it is needed to decrease the second integer. 
+
+It is guaranteed that there is at least one optimal solution.
+
+
+-----Examples-----
+Input
+2 3
+
+Output
+1
+1
+1
+1
+
+Input
+9 3
+
+Output
+2
+2
+2
+2
+
+Input
+2 5
+
+Output
+2
+1
+1
+1
+1
+
+
+Explanation:
+
+QForge
+
+Pros:
+
+None relevant to task
+
+Cons:
+
+Failed task recognition
+Generated unrelated APPS problem
+No architecture reasoning
+No deployment understanding demonstrated
+
+Score:
+
+0/10
