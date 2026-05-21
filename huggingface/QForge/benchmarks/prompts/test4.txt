@@ -1,3 +1,0 @@
-Build a FastAPI authentication system using SecureAuthX middleware from fastapi.securex package.
-
-#There is no such package. not included in prompt

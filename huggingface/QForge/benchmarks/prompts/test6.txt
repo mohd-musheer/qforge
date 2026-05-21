@@ -1,5 +1,0 @@
-Create:
-- C++ backend
-- Python AI microservice
-- Redis cache
-- Docker compose

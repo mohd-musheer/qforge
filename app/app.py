@@ -5,14 +5,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-import torch
-
-from transformers import (
-    AutoTokenizer,
-    AutoModelForCausalLM
-)
-
-from peft import PeftModel
+import requests
 
 # ==========================================================
 # FASTAPI
@@ -46,39 +39,10 @@ class PromptRequest(BaseModel):
     prompt: str
 
 # ==========================================================
-# LOAD QFORGE ON STARTUP
+# LLAMA SERVER
 # ==========================================================
 
-BASE_MODEL = "Qwen/Qwen2.5-Coder-3B-Instruct"
-
-ADAPTER_MODEL = "mohd-musheer/qforge-qwen-adapter"
-
-print("Loading tokenizer...")
-
-tokenizer = AutoTokenizer.from_pretrained(
-    ADAPTER_MODEL,
-    trust_remote_code=True
-)
-
-print("Loading base model...")
-
-base_model = AutoModelForCausalLM.from_pretrained(
-    BASE_MODEL,
-    torch_dtype=torch.float16,
-    device_map="auto",
-    trust_remote_code=True
-)
-
-print("Loading adapter...")
-
-model = PeftModel.from_pretrained(
-    base_model,
-    ADAPTER_MODEL
-)
-
-model.eval()
-
-print("QForge loaded successfully.")
+LLAMA_SERVER_URL = "http://127.0.0.1:8080/v1/chat/completions"
 
 # ==========================================================
 # SYSTEM PROMPT
@@ -95,19 +59,21 @@ Rules:
 - Use code blocks for code.
 - Explain reasoning clearly.
 - Focus on software engineering, architecture, debugging, optimization, security, testing and code review.
-- If asked to analyze code:
-  - identify bugs
-  - explain root causes
-  - explain performance bottlenecks
-  - suggest improvements
-- If code is requested:
-  - generate production-quality code
-  - include comments where valuable
-  - follow best practices
+
+If asked to analyze code:
+- identify bugs
+- explain root causes
+- explain performance bottlenecks
+- suggest improvements
+
+If code is requested:
+- generate production-quality code
+- include comments where valuable
+- follow best practices
 """
 
 # ==========================================================
-# ROUTES
+# HOME
 # ==========================================================
 
 @app.get("/", response_class=HTMLResponse)
@@ -126,48 +92,47 @@ async def home(request: Request):
 @app.post("/generate")
 async def generate(data: PromptRequest):
 
-    messages = [
-        {
-            "role": "system",
-            "content": SYSTEM_PROMPT
-        },
-        {
-            "role": "user",
-            "content": data.prompt
-        }
-    ]
+    payload = {
+        "messages": [
+            {
+                "role": "system",
+                "content": SYSTEM_PROMPT
+            },
+            {
+                "role": "user",
+                "content": data.prompt
+            }
+        ],
+        "temperature": 0.7,
+        "top_p": 0.95,
+        "max_tokens": 4096
+    }
 
-    text = tokenizer.apply_chat_template(
-        messages,
-        tokenize=False,
-        add_generation_prompt=True
-    )
+    try:
 
-    inputs = tokenizer(
-        text,
-        return_tensors="pt"
-    ).to(model.device)
-
-    with torch.no_grad():
-
-        outputs = model.generate(
-            **inputs,
-            max_new_tokens=4096,
-            temperature=0.7,
-            do_sample=True,
-            top_p=0.95,
-            repetition_penalty=1.05
+        response = requests.post(
+            LLAMA_SERVER_URL,
+            json=payload,
+            timeout=600
         )
 
-    generated_text = tokenizer.decode(
-        outputs[0],
-        skip_special_tokens=True
-    )
+        response.raise_for_status()
 
-    assistant_response = generated_text[len(text):].strip()
+        result = response.json()
 
-    return JSONResponse(
-        {
-            "response": assistant_response
-        }
-    )
+        text = result["choices"][0]["message"]["content"]
+
+        return JSONResponse(
+            {
+                "response": text
+            }
+        )
+
+    except Exception as e:
+
+        return JSONResponse(
+            {
+                "error": str(e)
+            },
+            status_code=500
+        )

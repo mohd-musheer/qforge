@@ -1,13 +1,5 @@
 fastapi
-uvicorn
+uvicorn[standard]
 jinja2
 requests
 python-multipart
-
-torch
-transformers
-peft
-accelerate
-sentencepiece
-safetensors
-huggingface_hub

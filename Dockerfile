@@ -17,6 +17,7 @@ RUN ln -sf /usr/bin/python3 /usr/bin/python
 RUN ln -sf /usr/bin/pip3 /usr/bin/pip
 
 # Build llama.cpp
+
 RUN git clone https://github.com/ggerganov/llama.cpp
 
 RUN cmake -S llama.cpp -B llama.cpp/build \
@@ -32,4 +33,9 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["bash","-c","./llama.cpp/build/bin/llama-server -m models/qforge-q5.gguf --host 0.0.0.0 --port 8080 & uvicorn app.app:app --host 0.0.0.0 --port 8000"]
+CMD ["bash","-c","\
+./llama.cpp/build/bin/llama-server \
+-m models/qforge-q5.gguf \
+--host 0.0.0.0 \
+--port 8080 & \
+uvicorn app.app:app --host 0.0.0.0 --port 8000"]
